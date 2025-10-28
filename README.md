@@ -39,6 +39,17 @@ Clone the repository:
 
 git clone https://github.com/your-username/FoodieHub.git
 
+*************************************************************************************************
+To make sure that it runs perfectly, perform the following steps:
+1. Create a folder for the website.
+2. create two sub folders in it named as, images and css.
+3. in this main folder, add all the HTML files.
+4. in the css folder, add all the css files.
+5. in images folder, create more sub folders, as "home background", "login page", "logo" and "map".
+6. add their images respectively.
+7. run the website and see the best.
+   Have fun, Enjoy.
+*************************************************************************************************
 
 Open project folder
 

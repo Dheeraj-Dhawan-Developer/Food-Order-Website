@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FoodieHub — Home</title>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="css/index.css" rel="stylesheet">
+
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="wrap nav">
+      <div class="brand">
+        <img src="images/logo/logo.png" alt="Logo" />
+        <div class="logo"><span>Foodie</span>Hub</div>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="index.html class="active"">Home</a></li>
+          <li><a href="menu.html">Menu</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="order.html">Order</a></li>
+        </ul>
+      </nav>
+
+      <div class="search">
+        <input type="text" placeholder="Search for food..." />
+      </div>
+
+      <div class="icons">
+        <div class="icon-btn">🛒 <span class="badge">3</span></div>
+        <div class="icon-btn">👤</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <main>
+    <section class="hero" role="region" aria-label="Hero section">
+      <div class="wrap">
+        <h1>Delicious Food <span class="highlight">Delivered Fast</span></h1>
+        <p class="lead">Order from your favorite restaurants and get fresh, hot meals delivered to your doorstep in 30 minutes or less.</p>
+
+        <div class="searchrow" role="search">
+          <div class="address" aria-label="Delivery address">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="margin-right:10px;opacity:0.7"><path d="M12 2C8.1 2 5 5.1 5 9c0 7 7 13 7 13s7-6 7-13c0-3.9-3.1-7-7-7z" stroke="#222" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <input type="text" placeholder="Enter your delivery address..." aria-label="Enter your delivery address"/>
+          </div>
+          <button class="btn" aria-label="Find food">Find Food</button>
+        </div>
+
+        <div class="cta-row" style="margin-top:14px">
+          <button class="btn" style="background:white;color:var(--accent);font-weight:700">Order Now</button>
+          
+        </div>
+      </div>
+
+      <div class="stats" aria-hidden="true">
+        <div class="item"><div class="num">500+</div><div>Restaurants</div></div>
+        <div class="item"><div class="num">50K+</div><div>Happy Customers</div></div>
+        <div class="item"><div class="num">30min</div><div>Fast Delivery</div></div>
+      </div>
+    </section>
+
+    <!-- WHY CHOOSE / FEATURES -->
+    <section class="section" id="about">
+      <div class="wrap">
+        <div class="heading">
+          <div>
+            <h2>Why Choose FoodieHub?</h2>
+            <p class="sub">Experience the best food delivery service with unmatched quality and convenience</p>
+          </div>
+          <div style="align-self:center">
+            <button style="background:white;border-radius:12px;padding:8px 14px;border:1px solid #e6e8eb;cursor:pointer">Learn More</button>
+          </div>
+        </div>
+
+        <div class="features" aria-hidden="false">
+          <article class="feature">
+            <div class="icon">🚚</div>
+            <h4>Fast Delivery</h4>
+            <p>Get your favorite meals delivered in 30 minutes or less with our lightning-fast delivery service.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon">⏱</div>
+            <h4>24/7 Available</h4>
+            <p>Order anytime, anywhere. Our platform and partners are available round the clock.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon">🛡</div>
+            <h4>Safe & Secure</h4>
+            <p>Your payments and personal information are protected with bank-level security measures.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon">🍽</div>
+            <h4>Quality Food</h4>
+            <p>We partner with the best restaurants to ensure you get fresh, delicious meals every time.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- BROWSE BY CATEGORY -->
+    <section class="section" id="categories">
+      <div class="wrap">
+        <div class="heading">
+          <div>
+            <h2>Browse by Category</h2>
+            <p class="sub">Discover amazing dishes from various cuisines and find your new favorite meal</p>
+          </div>
+          <div><button style="background:white;border-radius:12px;padding:8px 14px;border:1px solid #e6e8eb;cursor:pointer">View All</button></div>
+        </div>
+
+        <div class="categories" role="list">
+          <div class="cat" role="listitem">
+            <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=60" alt="Burgers">
+            <h5>Burgers</h5>
+            <p>120+ restaurants</p>
+          </div>
+
+          <div class="cat" role="listitem">
+            <img src="https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=800&q=60" alt="Sushi">
+            <h5>Sushi</h5>
+            <p>85+ restaurants</p>
+          </div>
+
+          <div class="cat" role="listitem">
+            <img src="https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&w=800&q=60" alt="Pizza">
+            <h5>Pizza</h5>
+            <p>200+ restaurants</p>
+          </div>
+
+          <div class="cat" role="listitem">
+            <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=800&q=60" alt="Healthy">
+            <h5>Healthy</h5>
+            <p>90+ restaurants</p>
+          </div>
+
+          <div class="cat" role="listitem">
+            <img src="https://images.unsplash.com/photo-1523986371872-9d3ba2e2f642?auto=format&fit=crop&w=800&q=60" alt="Pasta">
+            <h5>Pasta</h5>
+            <p>150+ restaurants</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- POPULAR DISHES -->
+    <section class="section" id="popular">
+      <div class="wrap">
+        <div class="heading">
+          <div>
+            <h2>Popular Dishes</h2>
+            <p class="sub">Most ordered dishes this week</p>
+          </div>
+          <div><button style="background:white;border-radius:12px;padding:8px 14px;border:1px solid #e6e8eb;cursor:pointer">View All</button></div>
+        </div>
+
+        <div class="cards" role="list">
+          <!-- card 1 -->
+          <article class="card" role="listitem">
+            <div class="media">
+              <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1200&q=60" alt="Gourmet Beef Burger">
+              <div class="badge-top-left">20% OFF</div>
+              <div class="badge-top-right">+</div>
+            </div>
+            <div class="body">
+              <div>
+                <div class="title">Gourmet Beef Burger</div>
+                <div class="meta"><span>🍔 Burger Palace</span> <span>⭐ 4.8 (324)</span> <span>⏱ 25-30 min</span></div>
+              </div>
+
+              <div class="price-row">
+                <div>
+                  <span class="price">$12.99</span><span class="old">$15.99</span>
+                </div>
+                <button class="add-btn">Add</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- card 2 -->
+          <article class="card" role="listitem">
+            <div class="media">
+              <img src="https://images.unsplash.com/photo-1585238342028-3f8f8d8b3c9f?auto=format&fit=crop&w=1200&q=60" alt="Fresh Salmon Sushi Set">
+              <div class="badge-top-right">+</div>
+            </div>
+            <div class="body">
+              <div>
+                <div class="title">Fresh Salmon Sushi Set</div>
+                <div class="meta"><span>🍣 Tokyo Kitchen</span> <span>⭐ 4.9 (156)</span> <span>⏱ 20-25 min</span></div>
+              </div>
+
+              <div class="price-row">
+                <div>
+                  <span class="price">$18.99</span>
+                </div>
+                <button class="add-btn">Add</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- card 3 -->
+          <article class="card" role="listitem">
+            <div class="media">
+              <img src="https://images.unsplash.com/photo-1604908176820-3890a301d7c7?auto=format&fit=crop&w=1200&q=60" alt="Margherita Pizza">
+              <div class="badge-top-right">Popular</div>
+            </div>
+            <div class="body">
+              <div>
+                <div class="title">Margherita Pizza</div>
+                <div class="meta"><span>🍕 Italian Corner</span> <span>⭐ 4.7 (289)</span> <span>⏱ 30-35 min</span></div>
+              </div>
+
+              <div class="price-row">
+                <div>
+                  <span class="price">$14.99</span>
+                </div>
+                <button class="add-btn">Add</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- card 4 -->
+          <article class="card" role="listitem">
+            <div class="media">
+              <img src="https://images.unsplash.com/photo-1478145046317-39f10e56b5e9?auto=format&fit=crop&w=1200&q=60" alt="Rainbow Buddha Bowl">
+              <div class="badge-top-right">+</div>
+            </div>
+            <div class="body">
+              <div>
+                <div class="title">Rainbow Buddha Bowl</div>
+                <div class="meta"><span>🥗 Green Garden</span> <span>⭐ 4.6 (198)</span> <span>⏱ 15-20 min</span></div>
+              </div>
+
+              <div class="price-row">
+                <div>
+                  <span class="price">$11.99</span>
+                </div>
+                <button class="add-btn">Add</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer">
+        <h4>FoodieHub</h4>
+        <p>Your favorite food delivery app bringing delicious meals from the best restaurants right to your doorstep.</p>
+        <div style="margin-top:10px">Follow us: <span style="opacity:0.9">Facebook · Twitter · Instagram</span></div>
+      </div>
+
+      <div class="footer">
+        <h4>Quick Links</h4>
+        <a href="about.html">About Us</a>
+        <a href="menu.html">Menu</a>
+        <a href="contact.html">Contact</a>
+        <a href="Privacy Policy.pdf">Privacy Policy</a>
+      </div>
+
+      <div class="footer">
+        <h4>Contact Us</h4>
+        <!-- The numbers, email or anything used are just for showing purpose -->
+        <a href="tel:+15551234567">+91-97794xxxxx</a>
+        <a href="mailto:hello@foodiehub.com">hello@foodiehub.com</a>
+        <div style="margin-top:10px">123 Food Street, Jalandhar, Punjab</div>
+      </div>
+
+      <div class="footer">
+        <h4>Stay Updated</h4>
+        <p style="color:rgba(255,255,255,0.8)">Subscribe to get special offers and updates</p>
+        <form onsubmit="event.preventDefault();alert('Thanks for subscribing!');" style="display:flex;gap:8px;margin-top:10px;">
+          <input type="email" required placeholder="Enter your email" style="flex:1;padding:10px;border-radius:8px;border:0;outline:none"/>
+          <button class="btn" style="padding:10px 12px;border-radius:8px">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <div style="max-width:var(--max-width);margin:18px auto 0;color:rgba(255,255,255,0.6);font-size:13px;padding:0 24px;">
+      © 2024 FoodieHub. All rights reserved. &nbsp;&nbsp;<a href="Privacy Policy.pdf"> Terms of Service · Privacy Policy</a>
+    </div>
+  </footer>
+
+  <script>
+    // tiny behavior: toast when Add buttons clicked
+    document.querySelectorAll('.add-btn').forEach(btn=>{
+      btn.addEventListener('click', e=>{
+        const title = e.target.closest('.card').querySelector('.title')?.textContent || 'item';
+        // simple toast:
+        const t = document.createElement('div');
+        t.textContent = title + ' added to cart';
+        t.style.position='fixed';
+        t.style.right='18px';
+        t.style.bottom='18px';
+        t.style.background='rgba(16,24,40,0.95)';
+        t.style.color='white';
+        t.style.padding='12px 16px';
+        t.style.borderRadius='10px';
+        t.style.boxShadow='0 8px 30px rgba(2,6,23,0.4)';
+        t.style.zIndex=9999;
+        document.body.appendChild(t);
+        setTimeout(()=>t.style.opacity='0',1400);
+        setTimeout(()=>t.remove(),2000);
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodieHub Auth</title>
+    <link href="css/login.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="auth-container">
+        <h1 id="formTitle">Sign Up</h1>
+        <p id="formSubtitle">Create your account to start ordering!</p>
+
+        <!-- Toggle -->
+        <div class="toggle-auth">
+            <button id="signupBtn" class="active">Sign Up</button>
+            <button id="signinBtn">Sign In</button>
+        </div>
+
+        <!-- User Type -->
+        <div class="user-type">
+            <label><input type="radio" name="user_type" value="customer" checked> Customer</label>
+            <label><input type="radio" name="user_type" value="restaurant"> Restaurant</label>
+        </div>
+
+        <!-- Error -->
+        <div id="errorMsg"></div>
+
+        <!-- Form -->
+        <form id="authForm">
+            <div class="input-group" id="nameGroup">
+                <label for="name">Name</label>
+                <input type="text" id="name">
+            </div>
+            <div class="input-group" id="emailGroup">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="input-group" id="phoneGroup">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone">
+            </div>
+            <div class="input-group" id="addressGroup">
+                <label for="address">Address</label>
+                <input type="text" id="address">
+            </div>
+            <div class="input-group" id="passwordGroup">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+                <span class="toggle-password" id="togglePassword">👁️</span>
+            </div>
+
+            <button type="submit" class="auth-btn" id="submitBtn">Sign Up</button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+        // --- Firebase Config ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDXAnALGnxD0Jwf8S_wlH-Bd_4mamwQSM",
+            authDomain: "food-order-website-923a1.firebaseapp.com",
+            projectId: "food-order-website-923a1",
+            storageBucket: "food-order-website-923a1.appspot.com",
+            messagingSenderId: "435502645513",
+            appId: "1:435502645513:web:88f102f36d0c03cd8553d8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- Elements ---
+        const signupBtn = document.getElementById("signupBtn");
+        const signinBtn = document.getElementById("signinBtn");
+        const formTitle = document.getElementById("formTitle");
+        const formSubtitle = document.getElementById("formSubtitle");
+        const submitBtn = document.getElementById("submitBtn");
+        const nameGroup = document.getElementById("nameGroup");
+        const phoneGroup = document.getElementById("phoneGroup");
+        const addressGroup = document.getElementById("addressGroup");
+        const errorMsg = document.getElementById("errorMsg");
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("password");
+        const userTypeInputs = document.querySelectorAll("input[name='user_type']");
+
+        let mode = "signup";
+        let userType = "customer";
+
+        // --- Password Toggle ---
+        togglePassword.addEventListener("click", () => {
+            passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+        });
+
+        // --- Update Form UI ---
+        function updateForm() {
+            errorMsg.textContent = '';
+            if (mode === "signup") {
+                formTitle.textContent = "Sign Up";
+                formSubtitle.textContent = "Create your account to start ordering!";
+                submitBtn.textContent = "Sign Up";
+                nameGroup.classList.remove("hidden");
+                phoneGroup.classList.remove("hidden");
+                addressGroup.classList.remove("hidden");
+            } else {
+                formTitle.textContent = "Sign In";
+                formSubtitle.textContent = "Welcome back!";
+                submitBtn.textContent = "Sign In";
+                nameGroup.classList.add("hidden");
+                phoneGroup.classList.add("hidden");
+                addressGroup.classList.add("hidden");
+            }
+        }
+
+        // --- Toggle Buttons ---
+        signupBtn.addEventListener("click", () => { mode = "signup"; signupBtn.classList.add("active"); signinBtn.classList.remove("active"); updateForm(); });
+        signinBtn.addEventListener("click", () => { mode = "signin"; signinBtn.classList.add("active"); signupBtn.classList.remove("active"); updateForm(); });
+
+        // --- User Type ---
+        userTypeInputs.forEach(radio => radio.addEventListener("change", e => userType = e.target.value));
+
+        // --- Form Submit ---
+        document.getElementById("authForm").addEventListener("submit", async e => {
+            e.preventDefault();
+            errorMsg.textContent = '';
+
+            const email = document.getElementById("email").value.trim();
+            const password = passwordInput.value;
+
+            if (!email || !password) { errorMsg.textContent = "Please fill all required fields."; return; }
+
+            if (mode === "signup") {
+                const name = document.getElementById("name").value.trim();
+                const phone = document.getElementById("phone").value.trim();
+                const address = document.getElementById("address").value.trim();
+                if (!name || !phone || !address) { errorMsg.textContent = "Please fill all required fields."; return; }
+
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    await setDoc(doc(db, "users", userCredential.user.uid), { name, email, phone, address, type: userType });
+                    alert("Account created successfully!");
+
+                    // ✅ Store login info locally
+                    if (userType === "restaurant") {
+                        localStorage.setItem("fh_restaurant", userCredential.user.uid);
+                        localStorage.setItem("fh_restaurant_name", name);
+                    }
+
+                    // optional: for customers (if needed)
+                    if (userType === "customer") {
+                        localStorage.setItem("fh_customer", userCredential.user.uid);
+                        localStorage.setItem("fh_customer_name", name);
+                    }
+
+                    document.getElementById("authForm").reset();
+                    window.location.href = userType === "customer" ? "index.html" : "restauranthome.html";
+                } catch (err) { errorMsg.textContent = err.message; }
+
+            } else { // Sign In
+                try {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+                    if (!userDoc.exists()) { errorMsg.textContent = "User data not found!"; return; }
+                    sessionStorage.setItem("userName", userDoc.data().name);
+                    sessionStorage.setItem("userType", userType);
+
+                    // ✅ Save for restaurant dashboard
+                    if (userType === "restaurant") {
+                        localStorage.setItem("fh_restaurant", userCredential.user.uid);
+                        localStorage.setItem("fh_restaurant_name", userDoc.data().name);
+                    } else {
+                        localStorage.setItem("fh_customer", userCredential.user.uid);
+                        localStorage.setItem("fh_customer_name", userDoc.data().name);
+                    }
+
+                    window.location.href = userType === "customer" ? "index.html" : "restauranthome.html";
+                } catch (err) {
+                    if (err.code === "auth/wrong-password") errorMsg.textContent = "Wrong password!";
+                    else if (err.code === "auth/user-not-found") errorMsg.textContent = "User not found!";
+                    else errorMsg.textContent = err.message;
+                }
+            }
+        });
+
+        updateForm();
+    </script>
+</body>
+
+</html>

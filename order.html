@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodieHub - Order History</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <!-- We need jsPDF for the bill generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link href="css/order.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <header>
+    <div class="wrap nav">
+      <div class="brand">
+        <!-- Using a placeholder logo -->
+        <!-- FIXED: Added target="_top" -->
+        <a href="index.html" class="logo" target="_top"><span>Foodie</span>Hub</a>
+      </div>
+      <nav>
+        <ul>
+          <!-- FIXED: Added target="_top" -->
+          <li><a href="index.html">Home</a></li>
+          <li><a href="menu.html">Menu</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="order.html" class="active">Order</a></li>
+        </ul>
+      </nav>
+      <div class="icons">
+        <!-- FIXED: Added target="_top" -->
+        <a href="cart.html" class="icon-btn" style="color: #333; text-decoration: none;" target="_top">🛒 <span
+            class="badge" id="cartBadge">0</span></a>
+        <a href="profile.html" class="icon-btn" style="color: #333; text-decoration: none;" target="_top">👤</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="order-container">
+    <h2>Your Orders</h2>
+
+    <div class="filters">
+      <input type="date" id="fromDate" title="From Date">
+      <input type="date" id="toDate" title="To Date">
+      <select id="statusFilter">
+        <option value="">All Status</option>
+        <option value="Pending">Pending</option>
+        <option value="Processing">Processing</option>
+        <option value="On the Way">On the Way</option>
+        <option value="Delivered">Delivered</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+      <select id="sortOrder">
+        <option value="dateDesc">Newest First</option>
+        <option value="dateAsc">Oldest First</option>
+        <option value="priceDesc">Price: High → Low</option>
+        <option value="priceAsc">Price: Low → High</option>
+      </select>
+      <input type="text" id="searchInput" placeholder="Search by item or restaurant..."
+        style="flex: 1; min-width: 200px;">
+      <button id="exportBtn" title="Export as CSV">Export CSV</button>
+      <button id="showDetailsBtn" title="Show all items in a table">Show Details</button>
+    </div>
+
+    <div id="orderContent">
+      <div class="message">Loading your orders...</div>
+    </div>
+
+    <div id="detailsContainer">
+      <table id="detailsTable">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Item Name</th>
+            <th>Restaurant</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer">
+        <h4>FoodieHub</h4>
+        <p>Your favorite food delivery app bringing delicious meals from the best restaurants right to your doorstep.
+        </p>
+      </div>
+      <div class="footer">
+        <h4>Quick Links</h4>
+        <!-- FIXED: Added target="_top" -->
+        <a href="about.html" target="_top">About Us</a>
+        <a href="menu.html" target="_top">Menu</a>
+        <a href="contact.html" target="_top">Contact</a>
+        <a href="#" target="_top">Privacy Policy</a>
+      </div>
+      <div class="footer">
+        <h4>Contact Us</h4>
+        <a href="tel:+919779400000">+91-97794xxxxx</a>
+        <a href="mailto:hello@foodiehub.com">hello@foodiehub.com</a>
+        <div style="margin-top:10px">123 Food Street, Jalandhar, Punjab</div>
+      </div>
+      <div class="footer">
+        <h4>Stay Updated</h4>
+        <form id="subscribeForm" style="display:flex;gap:8px;margin-top:10px;">
+          <input type="email" id="subscribeEmail" required placeholder="Enter your email"
+            style="flex:1;padding:10px;border-radius:8px;border:0;outline:none" />
+          <button type="submit" class="btn">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2024 FoodieHub. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- NEW: Universal Modal -->
+  <div class="modal-overlay" id="appModal">
+    <div class="modal-content">
+      <p id="modalMessage"></p>
+      <div class="modal-buttons">
+        <button id="modalBtnCancel" class="modal-btn-cancel">Cancel</button>
+        <button id="modalBtnConfirm" class="modal-btn-confirm">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      onSnapshot,
+      setDoc,
+      doc
+    } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDDXAnALGnxD0Jwf8S_wlH-Bd_4mamwQSM",
+      authDomain: "food-order-website-923a1.firebaseapp.com",
+      projectId: "food-order-website-923a1",
+      storageBucket: "food-order-website-923a1.appspot.com",
+      messagingSenderId: "435502645513",
+      appId: "1:435502645513:web:88f102f36d0c03cd8553d8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const orderContent = document.getElementById("orderContent");
+    const searchInput = document.getElementById("searchInput");
+    const fromDateInput = document.getElementById("fromDate");
+    const toDateInput = document.getElementById("toDate");
+    const statusFilter = document.getElementById("statusFilter");
+    const sortOrder = document.getElementById("sortOrder");
+    const exportBtn = document.getElementById("exportBtn");
+    const showDetailsBtn = document.getElementById("showDetailsBtn");
+    const detailsContainer = document.getElementById("detailsContainer");
+    const detailsTableBody = detailsContainer.querySelector("tbody");
+
+    let allOrders = []; // This will hold the live data
+
+    // --- NEW: Modal Helper Functions ---
+    const modal = document.getElementById("appModal");
+    const modalMessage = document.getElementById("modalMessage");
+    const modalBtnConfirm = document.getElementById("modalBtnConfirm");
+    const modalBtnCancel = document.getElementById("modalBtnCancel");
+
+    let confirmCallback = null;
+
+    function showAppAlert(message) {
+      modalMessage.textContent = message;
+      modalBtnConfirm.textContent = "OK";
+      modalBtnCancel.style.display = "none";
+      modal.classList.add("visible");
+
+      confirmCallback = (confirmed) => {
+        modal.classList.remove("visible");
+        confirmCallback = null;
+      };
+    }
+
+    modalBtnConfirm.addEventListener("click", () => {
+      if (confirmCallback) confirmCallback(true);
+    });
+
+    modalBtnCancel.addEventListener("click", () => {
+      if (confirmCallback) confirmCallback(false);
+    });
+
+    document.getElementById("subscribeForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      // MODIFIED: Replaced alert()
+      showAppAlert("Thanks for subscribing!");
+      document.getElementById("subscribeEmail").value = "";
+    });
+    // --- End Modal Helpers ---
+
+    // Helper: safely convert timestamp
+    function toDate(val) {
+      if (!val) return new Date();
+      if (val?.toDate && typeof val.toDate === "function") return val.toDate();
+      // Try parsing if it's a string
+      const d = new Date(val);
+      if (!isNaN(d.getTime())) return d;
+      return new Date(); // fallback
+    }
+
+    // Map restaurant statuses to user-friendly statuses
+    function mapRestaurantToUserStatus(status) {
+      if (!status) return "Pending"; // Default status
+      const s = status.toString().toLowerCase();
+
+      if (s === "pending") return "Pending";
+      if (s === "preparing" || s === "processing") return "Processing";
+      // UPDATED: Treat "prepared" as "Out for Delivery"
+      if (s === "prepared" || s === "out for delivery" || s === "on the way" || s === "delivering") return "On the Way";
+      if (s === "delivered") return "Delivered";
+      if (s === "cancelled" || s === "canceled") return "Cancelled";
+
+      // fallback: capitalize first letter
+      return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+
+    // Render orders
+    function applyFilters(orders) {
+      let filtered = [...orders];
+      const fromDate = fromDateInput.value ? new Date(fromDateInput.value) : null;
+      const toDate = toDateInput.value ? new Date(toDateInput.value) : null;
+
+      if (fromDate) fromDate.setHours(0, 0, 0, 0);
+      if (toDate) toDate.setHours(23, 59, 59, 999);
+
+      if (fromDate || toDate) {
+        filtered = filtered.filter(o => {
+          const d = o.timestamp; // Already a Date object
+          if (fromDate && d < fromDate) return false;
+          if (toDate && d > toDate) return false;
+          return true;
+        });
+      }
+
+      const status = statusFilter.value;
+      if (status) filtered = filtered.filter(o => o.status === status);
+
+      const search = searchInput.value.trim().toLowerCase();
+      if (search) {
+        filtered = filtered.filter(o =>
+          o.id.toLowerCase().includes(search) || // Search by order ID
+          (o.items && o.items.some(i => (i.name || "").toLowerCase().includes(search) || (o.restaurantName || "").toLowerCase().includes(search)))
+        );
+      }
+
+      // Sorting
+      // NOTE: This now safely uses .total because it's guaranteed to be a number
+      if (sortOrder.value === "dateAsc") filtered.sort((a, b) => a.timestamp - b.timestamp);
+      else if (sortOrder.value === "dateDesc") filtered.sort((a, b) => b.timestamp - a.timestamp);
+      else if (sortOrder.value === "priceAsc") filtered.sort((a, b) => a.total - b.total);
+      else if (sortOrder.value === "priceDesc") filtered.sort((a, b) => b.total - b.total);
+
+      return filtered;
+    }
+
+    function renderOrders() {
+      const filtered = applyFilters(allOrders); // Use the global allOrders
+      orderContent.innerHTML = "";
+
+      if (filtered.length === 0) {
+        orderContent.innerHTML = `<div class="message">No orders found.</div>`;
+        detailsContainer.style.display = "none";
+        return;
+      }
+
+      filtered.forEach(order => {
+        const card = document.createElement("div");
+        card.classList.add("order-card");
+
+        let statusClass = "";
+        switch (order.status) {
+          case "Pending": statusClass = "status-pending"; break;
+          case "Processing": statusClass = "status-preparing"; break;
+          case "On the Way": statusClass = "status-onway"; break;
+          case "Delivered": statusClass = "status-delivered"; break;
+          case "Cancelled": statusClass = "status-cancelled"; break;
+          default: statusClass = "status-pending";
+        }
+
+        const dateStr = order.timestamp.toLocaleString();
+        const items = order.items || [];
+
+        card.innerHTML = `
+      <div class="order-card-header">
+        <div class="order-id">Order #${order.id.slice(-6)}</div>
+        <div class="order-date">${dateStr}</div>
+        <div class="order-status ${statusClass}">${order.status}</div>
+      </div>
+      <div class="order-items">
+        ${items.slice(0, 2).map(i => `
+          <div class="order-item">
+            <img src="${i.imageURL || 'https://placehold.co/80x60/eee/ccc?text=No+Img'}" alt="${i.name}">
+            <div class="item-info">
+              <h4>${i.name || 'Item'}</h4>
+              <p>${order.restaurantName || i.restaurant || 'Restaurant'}</p>
+              <p class="item-price">₹${(i.price || 0).toFixed(2)} × ${i.quantity || 1}</p>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+      ${items.length > 2 ? `<span class="show-more-btn" data-order-id="${order.id}">Show ${items.length - 2} more...</span>` : ""}
+      <!-- NOTE: This now safely uses .total because it's guaranteed to be a number -->
+      <div class="order-total">Total: ₹${(order.total).toFixed(2)}</div>
+    `;
+
+        // Add PDF button
+        const pdfBtn = document.createElement("button");
+        pdfBtn.textContent = "Generate Bill";
+        pdfBtn.classList.add("action-btn");
+        pdfBtn.addEventListener("click", () => generatePDF(order));
+        card.appendChild(pdfBtn);
+
+        orderContent.appendChild(card);
+      });
+    }
+
+    // "Show More" logic
+    orderContent.addEventListener("click", (e) => {
+      const btn = e.target.closest(".show-more-btn");
+      if (!btn) return;
+
+      const orderId = btn.dataset.orderId;
+      const order = allOrders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const container = btn.closest(".order-card").querySelector(".order-items");
+      const isExpanded = btn.textContent.includes("Less");
+
+      if (isExpanded) {
+        // Collapse
+        container.innerHTML = (order.items || []).slice(0, 2).map(i => `
+      <div class="order-item">
+        <img src="${i.imageURL || 'https://placehold.co/80x60/eee/ccc?text=No+Img'}" alt="${i.name}">
+        <div class="item-info">
+          <h4>${i.name || 'Item'}</h4>
+          <p>${order.restaurantName || i.restaurant || 'Restaurant'}</p>
+          <p class="item-price">₹${(i.price || 0).toFixed(2)} × ${i.quantity || 1}</p>
+        </div>
+      </div>
+    `).join("");
+        btn.textContent = `Show ${order.items.length - 2} more...`;
+      } else {
+        // Expand
+        container.innerHTML = (order.items || []).map(i => `
+      <div class="order-item">
+        <img src="${i.imageURL || 'https://placehold.co/80x60/eee/ccc?text=No+Img'}" alt="${i.name}">
+        <div class="item-info">
+          <h4>${i.name || 'Item'}</h4>
+          <p>${order.restaurantName || i.restaurant || 'Restaurant'}</p>
+          <p class="item-price">₹${(i.price || 0).toFixed(2)} × ${i.quantity || 1}</p>
+        </div>
+      </div>
+    `).join("");
+        btn.textContent = "Show Less";
+      }
+    });
+
+    // PDF generation
+    function generatePDF(order) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFontSize(18);
+      doc.setFont("helvetica", "bold");
+      doc.text("FoodieHub - Invoice", 105, 15, { align: "center" });
+
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Order ID: ${order.id}`, 14, 30);
+      doc.text(`Date: ${order.timestamp.toLocaleString()}`, 14, 38);
+      doc.text(`Status: ${order.status}`, 14, 46);
+      doc.text(`Name: ${order.customerName || 'N/A'}`, 14, 54);
+      doc.text(`Address: ${order.address || 'N/A'}`, 14, 62);
+
+      let y = 75;
+      const colX = [14, 110, 140, 170];
+      doc.setFont("helvetica", "bold");
+      doc.text("Item", colX[0], y);
+      doc.text("Qty", colX[1], y);
+      doc.text("Unit Price", colX[2], y);
+      doc.text("Total", colX[3], y, { align: 'right' });
+      y += 8;
+
+      doc.setFont("helvetica", "normal");
+      let subtotal = 0;
+      (order.items || []).forEach(i => {
+        const itemTotal = (i.price || 0) * (i.quantity || 0);
+        subtotal += itemTotal;
+
+        // Handle long item names
+        const itemNameLines = doc.splitTextToSize(i.name || "Unknown Item", 90);
+        doc.text(itemNameLines, colX[0], y);
+
+        doc.text(`${i.quantity || 1}`, colX[1], y);
+        doc.text(`Rs. ${(i.price || 0).toFixed(2)}`, colX[2], y);
+        doc.text(`Rs. ${itemTotal.toFixed(2)}`, colX[3], y, { align: 'right' });
+
+        y += (itemNameLines.length * 6) + 4; // Adjust y based on text lines
+        if (y > 270) { doc.addPage(); y = 20; }
+      });
+
+      doc.setLineWidth(0.5);
+      doc.line(14, y, 196, y);
+      y += 8;
+
+      // NOTE: order.total is now the subtotal for this specific restaurant order
+      // If you add delivery/taxes, they should be part of the `order.total` from the cart.
+      // For simplicity, we'll assume `order.total` is the final amount for this sub-order.
+      const deliveryFee = 0; // Assuming 0 for now
+      const taxes = 0; // Assuming 0 for now
+      const grandTotal = order.total + deliveryFee + taxes;
+
+
+      doc.setFont("helvetica", "bold");
+      doc.text(`Subtotal:`, colX[2], y);
+      doc.text(`Rs. ${order.total.toFixed(2)}`, colX[3], y, { align: 'right' });
+      y += 7;
+
+      doc.setFont("helvetica", "normal");
+      doc.text(`Delivery Fee:`, colX[2], y);
+      doc.text(`Rs. ${deliveryFee.toFixed(2)}`, colX[3], y, { align: 'right' });
+      y += 7;
+
+      doc.text(`Taxes & Charges:`, colX[2], y);
+      doc.text(`Rs. ${taxes.toFixed(2)}`, colX[3], y, { align: 'right' });
+      y += 8;
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.text(`Grand Total:`, colX[2], y);
+      doc.text(`Rs. ${grandTotal.toFixed(2)}`, colX[3], y, { align: 'right' });
+      y += 15;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text("Thank you for ordering from FoodieHub!", 105, y, { align: "center" });
+
+      doc.save(`Bill_Order_${order.id.slice(-6)}.pdf`);
+    }
+
+
+    // --- *** KEY LISTENER: This now reflects live status changes *** ---
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        // FIXED: Added target="_top" to the login link
+        orderContent.innerHTML = '<div class="message">Please <a href="login.html" target="_top">login</a> to view your orders.</div>';
+        return;
+      }
+
+      // This is the single source of truth for this user's orders
+      const userOrdersRef = collection(db, "users", user.uid, "orders");
+
+      // onSnapshot listens for ANY changes to this collection
+      // This includes changes made by the restaurant!
+      const unsub = onSnapshot(userOrdersRef, snapshot => {
+
+        snapshot.docChanges().forEach(change => {
+          const docSnap = change.doc;
+          const data = docSnap.data() || {};
+          const orderId = docSnap.id;
+          const orderStatus = (data.status || "pending").toString().toLowerCase();
+
+          // Create the standardized order object
+          const orderObj = {
+            ...data,
+            id: orderId,
+            timestamp: toDate(data.timestamp), // Convert to Date object
+            status: mapRestaurantToUserStatus(data.status), // Standardize status
+            // --- *** FIX: Ensure .total is a number *** ---
+            total: parseFloat(data.total) || 0
+          };
+
+          if (change.type === "added") {
+            // New order added to the query.
+            // Add it to our local array.
+            allOrders.push(orderObj);
+
+            // --- This is the mirroring logic ---
+            // If it's a new "Pending" order, mirror it to the restaurant.
+            // We check restaurantId and status.
+            if (data.restaurantId && orderStatus === "pending") {
+
+              console.log(`[Order Mirror] New pending order detected: ${orderId}. Attempting to mirror to restaurant: ${data.restaurantId}`);
+
+              try {
+                // The mirror path is restaurants/{restaurantId}/orders/{userOrderId}
+                const restaurantOrderRef = doc(db, "restaurants", data.restaurantId, "orders", orderId);
+
+                // This is the data that will be saved in the restaurant's collection
+                const mirrorPayload = {
+                  ...data, // copy all data from the user's order
+                  userId: user.uid, // CRITICAL: Tell restaurant who this order belongs to
+                  id: orderId, // Customer's order ID (for batch update)
+                  displayOrderId: orderId.slice(-6), // A shorter ID for restaurant UI
+                  timestamp: data.timestamp, // Pass the server timestamp
+                  total: parseFloat(data.total) || 0 // Ensure total is a number
+                };
+
+                // set with merge:true won't overwrite if restaurant panel already wrote something
+                setDoc(restaurantOrderRef, mirrorPayload, { merge: true })
+                  .then(() => {
+                    console.log(`[Order Mirror] SUCCESS: Mirrored order ${orderId} to restaurant.`);
+                  })
+                  .catch(err => {
+                    console.error(`[Order Mirror] FAILED: Could not mirror order ${orderId}. This is likely a FIREBASE SECURITY RULE issue.`, err.message);
+                  });
+              } catch (e) {
+                console.error("[Order Mirror] CRITICAL ERROR during mirror attempt:", e);
+              }
+            } else if (!data.restaurantId) {
+              // This log will fire if cart.html is still broken
+              console.warn(`[Order Mirror] SKIPPED: Order ${orderId} is missing 'restaurantId' field.`);
+            }
+          }
+          else if (change.type === "modified") {
+            // An existing order was changed (e.g., status update from restaurant)
+            const index = allOrders.findIndex(o => o.id === orderId);
+            if (index > -1) {
+              allOrders[index] = orderObj; // Update the item in the array
+            } else {
+              allOrders.push(orderObj);
+            }
+          }
+          else if (change.type === "removed") {
+            // An order was deleted
+            allOrders = allOrders.filter(o => o.id !== orderId);
+          }
+        });
+
+        // Re-apply filters and re-render the entire list
+        renderOrders();
+
+      }, err => {
+        console.error("user orders onSnapshot err:", err);
+        orderContent.innerHTML = '<div class="message">Failed to load orders. Please refresh.</div>';
+      });
+    });
+
+    // Filters & search handlers
+    [fromDateInput, toDateInput, statusFilter, sortOrder, searchInput].forEach(el => {
+      el.addEventListener("input", renderOrders); // Just call renderOrders
+    });
+
+    // Export CSV
+    exportBtn.addEventListener("click", () => {
+      const filtered = applyFilters(allOrders);
+      if (filtered.length === 0) {
+        showAppAlert("No orders to export.");
+        return;
+      }
+
+      let csv = "Order ID,Date,Status,Items,Total\n";
+      filtered.forEach(o => {
+        const dateStr = o.timestamp.toLocaleString();
+        const itemsStr = (o.items || []).map(i => `${i.name}(${i.quantity})`).join(" | ");
+        csv += `"${o.id}","${dateStr}","${o.status}","${itemsStr}",${o.total}\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "foodiehub_orders.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Show Details Table
+    showDetailsBtn.addEventListener("click", () => {
+      const filtered = applyFilters(allOrders);
+      detailsTableBody.innerHTML = "";
+
+      if (filtered.length === 0) {
+        showAppAlert("No orders to show details for.");
+        detailsContainer.style.display = "none";
+        return;
+      }
+
+      filtered.forEach(o => {
+        (o.items || []).forEach(i => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+        <td>${o.id.slice(-6)}</td>
+        <td>${o.timestamp.toLocaleString()}</td>
+        <td>${o.status}</td>
+        <td>${i.name || '-'}</td>
+        <td>${o.restaurantName || i.restaurant || '-'}</td>
+        <td>${i.quantity || 1}</td>
+        <td>₹${(i.price || 0).toFixed(2)}</td>
+        <td>₹${((i.price || 0) * (i.quantity || 0)).toFixed(2)}</td>
+      `;
+          detailsTableBody.appendChild(row);
+        });
+      });
+      detailsContainer.style.display = "block";
+    });
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us - FoodieHub</title>
+  
+
+  <!-- FontAwesome for Icons -->
+  <script src="https://kit.fontawesome.com/4b6c99a7a1.js" crossorigin="anonymous"></script>
+  <link href="css/contact.css" rel="stylesheet">
+</head>
+<body>
+    <!-- HEADER -->
+  <header>
+    <div class="wrap nav">
+      <div class="brand">
+        <img src="images/logo/logo.png" alt="Logo" />
+        <div class="logo"><span style="color: orange;">Foodie</span>Hub</div>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="menu.html">Menu</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html" class="active">Contact</a></li>
+          <li><a href="order.html">Order</a></li>
+        </ul>
+      </nav>
+
+      <div class="search">
+        <input type="text" placeholder="Search for food..." />
+      </div>
+
+      <div class="icons">
+        <div class="icon-btn">🛒 <span class="badge">3</span></div>
+        <div class="icon-btn">👤</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- main-->
+  <div class="contact-container">
+    <h1>CONTACT US</h1>
+    <p>We’d love to hear from you!</p>
+
+    <!-- Left Side: Form -->
+    <div class="form-box">
+      <h2>Your Details</h2>
+      <form action="mailto:dheerajdhawan999@gmail.com" method="POST" enctype="text/plain">
+        <div class="input-field">
+          <i class="fas fa-user"></i>
+          <input type="text" name="name" placeholder="Name" required>
+        </div>
+        <div class="input-field">
+          <i class="fas fa-phone"></i>
+          <input type="tel" name="phone" placeholder="Phone Number" required>
+        </div>
+        <div class="input-field">
+          <i class="fas fa-envelope"></i>
+          <input type="email" name="email" placeholder="Email Address" required>
+        </div>
+        <div class="input-field">
+          <i class="fas fa-comment-dots"></i>
+          <textarea name="query" rows="4" placeholder="Your Query" required></textarea>
+        </div>
+        <button type="submit" >SUBMIT</button>
+      </form>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <!-- Right Side: Info -->
+    <div class="info-box">
+      <h2>Our Details</h2>
+      <p><strong>FOODIE HUB INDIA</strong></p>
+      <p>123 Spice Route, Flavour Town, Delhi, India</p>
+      <p><strong>📞 Phone:</strong> +91 800-FOOD-HUB (3663-482)</p>
+      <p><strong>✉ Email:</strong> <a href="mailto:hello@foodiehub.in">hello@foodiehub.in</a></p>
+
+      <div class="social">
+        <p><strong>Follow Us!</strong></p>
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </div>
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer">
+        <h4>FoodieHub</h4>
+        <p>Your favorite food delivery app bringing delicious meals from the best restaurants right to your doorstep.</p>
+        <div style="margin-top:10px">Follow us: <span style="opacity:0.9">Facebook · Twitter · Instagram</span></div>
+      </div>
+
+      <div class="footer">
+        <h4>Quick Links</h4>
+        <a href="about.html">About Us</a>
+        <a href="menu.html">Menu</a>
+        <a href="contact.html">Contact</a>
+        <a href="Privacy Policy.pdf">Privacy Policy</a>
+      </div>
+
+      <div class="footer">
+        <h4>Contact Us</h4>
+        <!-- The numbers, email or anything used are just for showing purpose -->
+        <a href="tel:+15551234567">+91-97794xxxxx</a>
+        <a href="mailto:hello@foodiehub.com">hello@foodiehub.com</a>
+        <div style="margin-top:10px">123 Food Street, Jalandhar, Punjab</div>
+      </div>
+
+      <div class="footer">
+        <h4>Stay Updated</h4>
+        <p style="color:rgba(255,255,255,0.8)">Subscribe to get special offers and updates</p>
+        <form onsubmit="event.preventDefault();alert('Thanks for subscribing!');" style="display:flex;gap:8px;margin-top:10px;">
+          <input type="email" required placeholder="Enter your email" style="flex:1;padding:10px;border-radius:8px;border:0;outline:none"/>
+          <button class="btn" style="padding:10px 12px;border-radius:8px">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <div style="max-width:var(--max-width);margin:18px auto 0;color:rgba(255,255,255,0.6);font-size:13px;padding:0 24px;">
+      © 2024 FoodieHub. All rights reserved. &nbsp;&nbsp;<a href="Privacy Policy.pdf"> Terms of Service · Privacy Policy</a>
+    </div>
+  </footer>
+
+  <script>
+    // tiny behavior: toast when Add buttons clicked
+    document.querySelectorAll('.add-btn').forEach(btn=>{
+      btn.addEventListener('click', e=>{
+        const title = e.target.closest('.card').querySelector('.title')?.textContent || 'item';
+        // simple toast:
+        const t = document.createElement('div');
+        t.textContent = title + ' added to cart';
+        t.style.position='fixed';
+        t.style.right='18px';
+        t.style.bottom='18px';
+        t.style.background='rgba(16,24,40,0.95)';
+        t.style.color='white';
+        t.style.padding='12px 16px';
+        t.style.borderRadius='10px';
+        t.style.boxShadow='0 8px 30px rgba(2,6,23,0.4)';
+        t.style.zIndex=9999;
+        document.body.appendChild(t);
+        setTimeout(()=>t.style.opacity='0',1400);
+        setTimeout(()=>t.remove(),2000);
+      });
+    });
+  </script>
+
+</body>
+</html>

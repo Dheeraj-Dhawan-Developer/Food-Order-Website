@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restaurant Panel - FoodieHub</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="css/restauranthome.css" />
+</head>
+
+<body>
+  <div class="sidebar">
+    <h2>🍴 FoodieHub</h2>
+    <button class="active" data-section="dashboard">Dashboard</button>
+    <button data-section="addDish">Add Dish</button>
+    <button data-section="menu">Menu</button>
+    <button data-section="newOrders">New Orders <span class="badge" id="newOrdersBadge">0</span></button>
+    <button data-section="preparing">Preparing</button>
+    <button data-section="outDelivery">Out for Delivery</button>
+    <button data-section="history">Order History</button>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="content">
+    <div id="dashboard" class="section">
+      <div class="card">
+        <h3>Welcome, <span id="restaurantNameSpan">Loading...</span></h3>
+        <p>Manage your menu, track orders, and view insights.</p>
+      </div>
+    </div>
+
+    <div id="addDish" class="section hidden">
+      <div class="card">
+        <h3>Add New Dish</h3>
+        <form id="dishForm">
+          <input type="text" id="dishName" placeholder="Dish Name" required>
+          <textarea id="dishDesc" placeholder="Description"></textarea>
+          <input type="number" id="dishPrice" placeholder="Price (₹)" required>
+          <input type="text" id="dishQuantity" placeholder="Quantity or Size" required>
+          <input type="text" id="dishIngredients" placeholder="Ingredients" required>
+          <input type="text" id="dishImageURL" placeholder="Image URL (required)" required>
+          <select id="dishVegNonVeg">
+            <option value="veg">Veg</option>
+            <option value="non-veg">Non-Veg</option>
+          </select>
+          <select id="dishCategory">
+            <option value="Main">Main Course</option>
+            <option value="Starter">Starter</option>
+            <option value="Dessert">Dessert</option>
+            <option value="Drinks">Drinks</option>
+            <option value="Side">Side Dish</option>
+            <option value="Snacks">Snacks</option>
+            <option value="Condiments">Condiments</option>
+            <option value="Salads">Salads</option>
+            <option value="Soups">Soups</option>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Beverages">Beverages</option>
+            <option value="Specials">Chef Specials</option>
+          </select>
+          <button type="submit" class="btn">Add to Menu</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="menu" class="section hidden">
+      <div class="card">
+        <h3>Menu</h3>
+        <p id="totalDishes">Total Dishes: 0</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Type</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="menuTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="newOrders" class="section hidden"></div>
+    <div id="preparing" class="section hidden"></div>
+    <div id="outDelivery" class="section hidden"></div>
+    <div id="history" class="section hidden"></div>
+  </div>
+
+  <div class="modal-overlay" id="appModal">
+    <div class="modal-content">
+      <p id="modalMessage"></p>
+      <div class="modal-buttons">
+        <button id="modalBtnCancel" class="modal-btn-cancel">Cancel</button>
+        <button id="modalBtnConfirm" class="modal-btn-confirm">OK</button>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+// --- UPDATED IMPORT: Removed 'query', 'where', 'collectionGroup' ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+import { 
+  getFirestore, 
+  collection, 
+  getDocs, 
+  addDoc, 
+  deleteDoc, 
+  onSnapshot, 
+  updateDoc, 
+  doc
+} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDDXAnALGnxD0Jwf8S_wlH-Bd_4mamwQSM",
+  authDomain: "food-order-website-923a1.firebaseapp.com",
+  projectId: "food-order-website-923a1",
+  storageBucket: "food-order-website-923a1.appspot.com",
+  messagingSenderId: "435502645513",
+  appId: "1:435502645513:web:88f102f36d0c03cd8553d8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+(async function initRestaurantPanel() {
+
+  const modal = document.getElementById("appModal");
+  const modalMessage = document.getElementById("modalMessage");
+  const modalBtnConfirm = document.getElementById("modalBtnConfirm");
+  const modalBtnCancel = document.getElementById("modalBtnCancel");
+
+  let confirmCallback = null;
+
+  function showAppAlert(message) {
+    modalMessage.textContent = message;
+    modalBtnConfirm.textContent = "OK";
+    modalBtnCancel.style.display = "none";
+    modal.classList.add("visible");
+    confirmCallback = (confirmed) => { modal.classList.remove("visible"); confirmCallback = null; };
+  }
+
+  function showAppConfirm(message, callback) {
+    modalMessage.textContent = message;
+    modalBtnConfirm.textContent = "Confirm";
+    modalBtnCancel.style.display = "inline-block";
+    modal.classList.add("visible");
+    confirmCallback = (confirmed) => { modal.classList.remove("visible"); confirmCallback = null; callback(confirmed); };
+  }
+
+  modalBtnConfirm.addEventListener("click", () => { if(confirmCallback) confirmCallback(true); });
+  modalBtnCancel.addEventListener("click", () => { if(confirmCallback) confirmCallback(false); });
+
+  const nameSpan = document.getElementById("restaurantNameSpan");
+  const currentRestaurantId = localStorage.getItem("fh_restaurant");
+  const currentRestaurantName = localStorage.getItem("fh_restaurant_name");
+
+  if (!currentRestaurantId || !currentRestaurantName) { 
+    showAppAlert("Please log in first!"); 
+    window.top.location.href = "login.html"; 
+    return; 
+  }
+  console.log(`[Restaurant Panel] Logged in as: ${currentRestaurantName} (ID: ${currentRestaurantId})`);
+  nameSpan.textContent = currentRestaurantName;
+
+  // Sidebar navigation
+  document.querySelectorAll(".sidebar button[data-section]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".section").forEach(s=>s.classList.add("hidden"));
+      document.getElementById(btn.dataset.section).classList.remove("hidden");
+      document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  });
+
+  // Logout
+  document.getElementById("logoutBtn").addEventListener("click", ()=>{ 
+    localStorage.clear(); 
+    window.top.location.href = "login.html"; 
+  });
+
+  // Add Dish
+  document.getElementById("dishForm").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const name = document.getElementById("dishName").value.trim();
+    const desc = document.getElementById("dishDesc").value.trim();
+    const price = parseFloat(document.getElementById("dishPrice").value);
+    const quantity = document.getElementById("dishQuantity").value.trim();
+    const ingredients = document.getElementById("dishIngredients").value.trim();
+    const type = document.getElementById("dishVegNonVeg").value;
+    const category = document.getElementById("dishCategory").value;
+    const imageURL = document.getElementById("dishImageURL").value.trim();
+    
+    if(!name||!price||!quantity||!imageURL){
+        showAppAlert("Please fill all required fields!");
+        return;
+    }
+    
+    try{
+      await addDoc(collection(db,"restaurants",currentRestaurantId,"menu"),{
+          name,
+          desc,
+          price,
+          quantity,
+          ingredients,
+          type,
+          category,
+          imageURL,
+          restaurantId: currentRestaurantId, 
+          restaurant: currentRestaurantName, 
+          createdAt:new Date()
+      });
+      showAppAlert("✅ Dish added!"); 
+      e.target.reset(); 
+      loadMenu();
+    } catch(err){
+      console.error(err); 
+      showAppAlert("Error adding dish. Please try again.");
+    }
+  });
+
+  // loadMenu
+  async function loadMenu(){
+    const menuTable=document.getElementById("menuTable");
+    const total=document.getElementById("totalDishes");
+    menuTable.innerHTML=""; let count=0;
+    try{
+      const snapshot = await getDocs(collection(db,"restaurants",currentRestaurantId,"menu"));
+      if(snapshot.empty){menuTable.innerHTML='<tr><td colspan="7" class="notice-empty">No dishes added yet 🍲</td></tr>'; total.textContent="Total Dishes: 0"; return;}
+      snapshot.forEach(docSnap=>{
+        const d=docSnap.data(); count++;
+        const safeImage=d.imageURL?.startsWith("http")?`<img src="${d.imageURL}" alt="${d.name}" style="width:50px;height:50px;border-radius:6px;object-fit:cover;">`:`<img src="https://placehold.co/50x50/eee/ccc?text=No+Img" alt="No Image" style="width:50px;height:50px;border-radius:6px;object-fit:cover;">`;
+        menuTable.innerHTML+=`<tr><td>${safeImage}</td><td>${d.name||"-"}</td><td>${d.category||"-"}</td><td>₹${d.price||"-"}</td><td>${d.quantity||"-"}</td><td>${d.type||"-"}</td><td><button class="btn remove-btn" data-id="${docSnap.id}">Remove</button></td></tr>`;
+      });
+      total.textContent=`Total Dishes: ${count}`;
+    } catch(err){
+      console.error(err); 
+      showAppAlert("Failed to load menu.");
+    }
+  }
+
+  // Delete Dish
+  document.body.addEventListener("click", async e=>{
+    const btn=e.target.closest(".remove-btn"); if(!btn)return;
+    showAppConfirm("Are you sure you want to delete this dish?", async (confirmed) => {
+      if (!confirmed) return;
+      try {
+        await deleteDoc(doc(db,"restaurants",currentRestaurantId,"menu",btn.dataset.id)); 
+        loadMenu();
+      } catch(err) {
+        console.error(err);
+        showAppAlert("Failed to delete dish.");
+      }
+    });
+  });
+
+  loadMenu();
+
+  // ------------------ LIVE ORDERS ------------------
+  const newOrdersContainer=document.getElementById("newOrders");
+  const preparingContainer=document.getElementById("preparing");
+  const outDeliveryContainer=document.getElementById("outDelivery");
+  const historyContainer=document.getElementById("history");
+  const newOrdersBadge=document.getElementById("newOrdersBadge");
+
+  const ordersRef = collection(db, "restaurants", currentRestaurantName, "orders");
+  console.log(`[Restaurant Panel] Listening for orders at: restaurants/${currentRestaurantName}/orders`);
+
+  onSnapshot(ordersRef, snapshot => {
+    console.log(`[Restaurant Panel] onSnapshot fired! Received ${snapshot.docs.length} total orders for restaurant ${currentRestaurantName}.`);
+    
+    const newOrders=[], preparingOrders=[], outDeliveryOrders=[], completedOrders=[];
+    
+    snapshot.forEach(docSnap=>{
+      const data = docSnap.data() || {};
+      const orderObj = {...data, restaurantDocId: docSnap.id}; 
+      const st = (data.status || "").toLowerCase();
+      
+      if(st==="pending") newOrders.push(orderObj);
+      else if(st==="preparing") preparingOrders.push(orderObj);
+      else if(st==="out for delivery") outDeliveryOrders.push(orderObj);
+      else completedOrders.push(orderObj);
+    });
+    
+    renderOrdersSection(newOrdersContainer,newOrders,"Pending");
+    renderOrdersSection(preparingContainer,preparingOrders,"Preparing");
+    renderOrdersSection(outDeliveryContainer,outDeliveryOrders,"Out for Delivery");
+    renderOrdersSection(historyContainer,completedOrders,"History");
+
+    newOrdersBadge.textContent=newOrders.length;
+  }, error => {
+    console.error("[Restaurant Panel] ERROR in onSnapshot listener:", error);
+    showAppAlert("Error listening for real-time order updates. Please check console or refresh.");
+  });
+
+  // renderOrdersSection (with full order details)
+function renderOrdersSection(container, orders, status) {
+  container.innerHTML = "";
+  if (orders.length === 0) { 
+    container.innerHTML = `<div class="card"><h3>${status === "Pending" ? "New Orders" : status}</h3><div class="notice-empty">No ${status.toLowerCase()} orders yet 🍽️</div></div>`; 
+    return;
+  }
+
+  if (status === "Pending") {
+    orders.sort((a, b) => (b.timestamp?.toDate?.() || 0) - (a.timestamp?.toDate?.() || 0));
+  }
+
+  orders.forEach(order => {
+    const card = document.createElement("div"); 
+    card.classList.add("card");
+
+    // Calculate total price
+    const totalPrice = (order.items || []).reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0);
+
+    // Items display with prices
+    const itemsHTML = (order.items || []).map(i => `${i.name} × ${i.quantity} (₹${i.price || 0})`).join("<br>");
+
+    card.innerHTML = `
+      <h4>Order #${order.displayOrderId || order.restaurantDocId.slice(-6)}</h4>
+      <p><b>Customer:</b> ${order.customerName || "-"}</p>
+      <p><b>Phone:</b> ${order.customerphone || "-"}</p>
+      <p><b>Items:</b><br>${itemsHTML}</p>
+      <p><b>Total Price:</b> ₹${totalPrice}</p>
+      <p><b>Payment Method:</b> ${order.paymentMethod || "-"}</p>
+      <p><b>Status:</b> <span class="status" style="font-weight:bold; color:${status==="Pending" ? '#ff4b2b' : '#333'}">${order.status}</span></p>
+      <p><b>Time:</b> ${order.timestamp?.toDate?.().toLocaleString() || "-"}</p>
+      <p><b>Address:</b> ${order.address || "-"}</p>
+      ${status==="Pending"?'<button class="btn start-prep-btn">Start Preparing</button>':''}
+      ${status==="Preparing"?'<button class="btn out-delivery-btn">Out for Delivery</button>':''}
+      ${status==="Out for Delivery"?'<button class="btn delivered-btn">Delivered</button>':''}
+    `;
+    container.appendChild(card);
+
+    if (status === "Pending") card.querySelector(".start-prep-btn").addEventListener("click", () => updateOrderStatus(order, "Preparing"));
+    if (status === "Preparing") card.querySelector(".out-delivery-btn").addEventListener("click", () => updateOrderStatus(order, "Out for Delivery"));
+    if (status === "Out for Delivery") card.querySelector(".delivered-btn").addEventListener("click", () => updateOrderStatus(order, "Delivered"));
+  });
+}
+
+
+  // updateOrderStatus
+  async function updateOrderStatus(order, newStatus) {
+    if (!order.restaurantDocId) {
+      console.error("Order is missing restaurantDocId!", order);
+      showAppAlert("Error: Cannot update order, critical info missing.");
+      return;
+    }
+
+    const restaurantOrderRef = doc(db, "restaurants", currentRestaurantName, "orders", order.restaurantDocId);
+
+    try {
+      await updateDoc(restaurantOrderRef, { status: newStatus });
+      // onSnapshot automatically moves the order to correct section
+    } catch (err) {
+      console.error("Failed to update order status (updateDoc):", err);
+      showAppAlert("Failed to update order status. Please try again.");
+    }
+  }
+
+})();
+</script>
+
+</body>
+</html>

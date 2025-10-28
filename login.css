@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+body {
+    height:100vh;
+    display:flex;
+    justify-content:flex-end;   /* push form to right */
+    align-items:center;
+    background: url('../images/login page/13.webp') no-repeat center center/cover;
+    overflow:hidden;
+    padding: 20px 40px; /* margin from edges */
+}
+
+/* Card Container */
+.auth-container {
+    background: rgba(255,255,255,0.95);
+    padding: 25px 30px;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+    width: 320px;
+    text-align: center;
+    animation: fadeIn 0.8s ease;
+    margin: 10px 0; /* top & bottom margin */
+}
+
+/* Headings */
+h1 { margin-bottom:4px; color:#333; font-size:22px; font-weight:600; }
+p { margin-bottom:18px; color:#555; font-size:13px; }
+
+/* Toggle Buttons */
+.toggle-auth button {
+    padding:8px 18px;
+    margin:0 3px;
+    border:none;
+    border-radius:20px;
+    cursor:pointer;
+    font-weight:500;
+    font-size:13px;
+    transition:0.3s;
+    background:#f0f0f0;
+}
+.toggle-auth button.active {
+    background:#ff6b6b;
+    color:#fff;
+    transform:scale(1.05);
+}
+
+/* User Type */
+.user-type { margin:15px 0; font-size:13px; }
+.user-type label { margin-right:15px; font-weight:500; cursor:pointer; }
+
+/* Input Groups */
+.input-group { margin-bottom:14px; text-align:left; position: relative; }
+.input-group label { display:block; margin-bottom:4px; font-weight:500; color:#555; font-size:13px; }
+.input-group input {
+    width:100%;
+    padding:10px 36px 10px 12px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:13px;
+}
+.input-group input:focus {
+    border-color:#ff6b6b;
+    box-shadow:0 0 6px rgba(255,107,107,0.4);
+    outline:none;
+}
+
+/* Password Eye */
+.toggle-password {
+    position:absolute;
+    top:32px;
+    right:12px;
+    cursor:pointer;
+    font-size:14px;
+    color:#777;
+}
+
+/* Submit Button */
+.auth-btn {
+    width:100%;
+    padding:11px;
+    background:#ff6b6b;
+    color:#fff;
+    border:none;
+    border-radius:20px;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:600;
+    transition:0.3s;
+    margin-top:5px;
+}
+.auth-btn:hover { background:#ff4c4c; transform:translateY(-1px); }
+
+/* Error */
+#errorMsg {
+    color:red;
+    font-size:12px;
+    margin-bottom:8px;
+    min-height:15px;
+}
+
+/* Hidden */
+.hidden { display:none; }
+
+/* FadeIn */
+@keyframes fadeIn {
+    0% {opacity:0; transform: translateY(-20px);}
+    100% {opacity:1; transform: translateY(0);}
+}

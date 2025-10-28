@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodieHub - Cart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="css/cart.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="wrap nav">
+      <div class="brand">
+        <!-- <img src="images/logo/logo.png" alt="Logo"> -->
+        <a href="index.html" class="logo" target="_top"><span>Foodie</span>Hub</a>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="index.html" target="_top">Home</a></li>
+          <li><a href="menu.html" target="_top">Menu</a></li>
+          <li><a href="cart.html" target="_top" class="active">Cart</a></li>
+          <li><a href="contact.html" target="_top">Contact</a></li>
+          <li><a href="about.html" target="_top">About</a></li>
+          <li><a href="order.html" target="_top">Orders</a></li>
+        </ul>
+      </nav>
+      <div class="icons">
+        <a href="cart.html" class="icon-btn" target="_top">🛒 <span class="badge" id="cartBadge">0</span></a>
+        <a href="profile.html" class="icon-btn" target="_top">👤</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CART SECTION -->
+  <section class="cart-container" id="cartSection">
+    <h2>Your Cart</h2>
+    <div id="cartContent">
+        <div class="message">Loading your cart...</div>
+    </div>
+    <div class="coupon">
+      <label>Coupon Code:</label>
+      <div style="display:flex; gap:10px;">
+        <input type="text" id="couponCode" placeholder="Enter code">
+        <button id="applyCouponBtn">Apply</button>
+      </div>
+      <span id="couponMessage" style="color:green;"></span>
+    </div>
+    <div class="delivery-msg">
+      <label>Delivery Message (Optional):</label>
+      <textarea id="deliveryMsg" placeholder="e.g., leave at door, call on arrival..."></textarea>
+    </div>
+    <div id="cartTotal" class="total-section">Total: ₹0.00</div>
+    <button id="checkoutBtn" class="checkout-btn" style="display:none;">Proceed to Checkout</button>
+  </section>
+
+  <!-- CHECKOUT MODAL -->
+  <div class="modal-bg" id="checkoutModal">
+    <div class="modal">
+      <h3 id="modalTitle">Checkout - Step 1</h3>
+
+      <!-- STEP 1: ADDRESS -->
+      <div class="step active" id="stepAddress">
+        <label>Full Name*</label>
+        <input type="text" id="fullName" placeholder="John Doe">
+        <label>Phone Number*</label>
+        <input type="text" id="phone" placeholder="9876543210">
+        <label>Street/House/Area*</label>
+        <input type="text" id="street" placeholder="123 Main St">
+        <label>City, State*</label>
+        <input type="text" id="city" placeholder="Jalandhar, Punjab">
+        <label>Pincode*</label>
+        <input type="text" id="pincode" placeholder="144001">
+        <div class="actions">
+          <button id="closeModalBtn" class="btn-secondary">Cancel</button>
+          <button id="nextToPayment">Next to Payment</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: PAYMENT -->
+      <div class="step" id="stepPayment">
+        <label>Select Payment Method*</label>
+        <select id="paymentMethod">
+          <option value="">--Choose Payment--</option>
+          <option value="UPI">UPI</option>
+          <option value="Card">Card</option>
+          <option value="COD">Cash on Delivery</option>
+        </select>
+        <div class="actions">
+          <button id="backToAddress" class="btn-secondary">Back to Address</button>
+          <button id="nextToConfirm">Review Order</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: CONFIRMATION -->
+      <div class="step" id="stepConfirm">
+        <h4>Order Summary</h4>
+        <div id="orderSummary" style="font-size:14px; text-align: left; max-height: 200px; overflow-y: auto; border: 1px solid #eee; padding: 10px; border-radius: 8px;"></div>
+        <div class="actions">
+          <button id="backToPayment" class="btn-secondary">Back to Payment</button>
+          <button id="placeOrderBtn">Place Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- SIMPLE ALERT MODAL -->
+  <div class="modal-bg" id="alertModal">
+      <div class="modal">
+          <h3 id="alertTitle">Alert</h3>
+          <p id="alertMessage" style="font-size: 16px;"></p>
+          <div class="actions" style="justify-content: center;">
+              <button id="alertOkBtn">OK</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer">
+        <h4>FoodieHub</h4>
+        <p>Your favorite food delivery app bringing delicious meals from the best restaurants right to your doorstep.
+        </p>
+      </div>
+      <div class="footer">
+        <h4>Quick Links</h4>
+        <a href="about.html" target="_top">About Us</a>
+        <a href="menu.html" target="_top">Menu</a>
+        <a href="contact.html" target="_top">Contact</a>
+        <a href="Privacy Policy.pdf" target="_top">Privacy Policy</a>
+      </div>
+      <div class="footer">
+        <h4>Contact Us</h4>
+        <a href="tel:+15551234567">+91-97794xxxxx</a>
+        <a href="mailto:hello@foodiehub.com">hello@foodiehub.com</a>
+        <div style="margin-top:10px">123 Food Street, Jalandhar, Punjab</div>
+      </div>
+      <div class="footer">
+        <h4>Stay Updated</h4>
+        <form id="subscribeForm" style="display:flex;gap:8px;margin-top:10px;">
+          <input type="email" id="subscribeEmail" required placeholder="Enter your email"
+            style="flex:1;padding:10px;border-radius:8px;border:0;outline:none" />
+          <button class="btn">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2024 FoodieHub. All rights reserved.
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, deleteDoc, updateDoc, addDoc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDDXAnALGnxD0Jwf8S_wlH-Bd_4mamwQSM",
+      authDomain: "food-order-website-923a1.firebaseapp.com",
+      projectId: "food-order-website-923a1",
+      storageBucket: "food-order-website-923a1.appspot.com",
+      messagingSenderId: "435502645513",
+      appId: "1:435502645513:web:88f102f36d0c03cd8553d8"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Elements
+    const cartContent = document.getElementById("cartContent");
+    const cartTotal = document.getElementById("cartTotal");
+    const checkoutBtn = document.getElementById("checkoutBtn");
+    const cartSection = document.getElementById("cartSection");
+    const couponCodeInput = document.getElementById("couponCode");
+    const applyCouponBtn = document.getElementById("applyCouponBtn");
+    const couponMessage = document.getElementById("couponMessage");
+    const deliveryMsgInput = document.getElementById("deliveryMsg");
+    const badge = document.getElementById("cartBadge");
+
+    // Checkout Modal elements
+    const checkoutModal = document.getElementById("checkoutModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const stepAddress = document.getElementById("stepAddress");
+    const stepPayment = document.getElementById("stepPayment");
+    const stepConfirm = document.getElementById("stepConfirm");
+    const nextToPayment = document.getElementById("nextToPayment");
+    const backToAddress = document.getElementById("backToAddress");
+    const nextToConfirm = document.getElementById("nextToConfirm");
+    const backToPayment = document.getElementById("backToPayment");
+    const placeOrderBtn = document.getElementById("placeOrderBtn");
+    const orderSummary = document.getElementById("orderSummary");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    
+    // Alert Modal elements
+    const alertModal = document.getElementById("alertModal");
+    const alertTitle = document.getElementById("alertTitle");
+    const alertMessage = document.getElementById("alertMessage");
+    const alertOkBtn = document.getElementById("alertOkBtn");
+
+    let discountPercent = 0;
+    let items = []; // global array to hold cart items
+    let currentUserId = null;
+
+    // --- Alert Modal Function ---
+    function showAppAlert(message, title = "Alert") {
+        alertTitle.textContent = title;
+        alertMessage.textContent = message;
+        alertModal.classList.add("visible");
+    }
+    alertOkBtn.addEventListener("click", () => {
+        alertModal.classList.remove("visible");
+    });
+    
+    // --- Subscribe Form ---
+    document.getElementById("subscribeForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        showAppAlert("Thanks for subscribing!");
+        document.getElementById("subscribeEmail").value = "";
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        cartSection.innerHTML = `<div class="message">Please <a href="login.html" target="_top">login</a> to continue.</div>`;
+        badge.textContent = "0";
+        return;
+      }
+      currentUserId = user.uid;
+
+      const cartRef = collection(db, "users", user.uid, "cart");
+
+      try {
+        const cartSnap = await getDocs(cartRef);
+
+        if (cartSnap.empty) {
+          cartSection.innerHTML = `<div class="message">Your cart is empty. <a href="menu.html" target="_top">Start shopping!</a></div>`;
+          badge.textContent = "0";
+          return;
+        }
+
+        items = [];
+        cartContent.innerHTML = "";
+
+        cartSnap.forEach((docSnap) => {
+          const data = docSnap.data();
+          const quantity = data.quantity || 1;
+          const itemData = { ...data, id: docSnap.id, quantity: quantity };
+          items.push(itemData);
+          renderCartItem(itemData, user.uid);
+        });
+
+        updateTotal();
+        checkoutBtn.style.display = "block";
+
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+        cartSection.innerHTML = `<div class="message">Failed to load cart. Try again later.</div>`;
+      }
+    });
+    
+    function renderCartItem(data, userId) {
+        const item = document.createElement("div");
+        item.classList.add("cart-item");
+        item.dataset.id = data.id; // Store doc id for easy access
+        
+        item.innerHTML = `
+          <img src="${data.imageURL || 'https_placehold.co/110x90/eee/ccc?text=No+Img'}" alt="${data.name}">
+          <div class="item-info">
+            <h4>${data.name}</h4>
+            <p>${data.restaurant}</p>
+            <p style="font-size:13px;color:#888;">${data.category}</p>
+            <div class="quantity">
+              <button class="minus" ${data.quantity <= 1 ? 'disabled' : ''}>-</button>
+              <span>${data.quantity}</span>
+              <button class="plus">+</button>
+            </div>
+          </div>
+          <span class="price">₹${(data.price * data.quantity).toFixed(2)}</span>
+          <button class="remove-btn">Remove</button>
+        `;
+
+        const minusBtn = item.querySelector(".minus");
+        const plusBtn = item.querySelector(".plus");
+        const removeBtn = item.querySelector(".remove-btn");
+
+        // Decrease quantity
+        minusBtn.addEventListener("click", async () => {
+            let currentItem = items.find(i => i.id === data.id);
+            if (currentItem.quantity > 1) {
+              currentItem.quantity--;
+              await updateDoc(doc(db, "users", userId, "cart", data.id), { quantity: currentItem.quantity });
+              updateItemUI(item, currentItem);
+              updateTotal();
+            }
+        });
+
+        // Increase quantity
+        plusBtn.addEventListener("click", async () => {
+            let currentItem = items.find(i => i.id === data.id);
+            currentItem.quantity++;
+            await updateDoc(doc(db, "users", userId, "cart", data.id), { quantity: currentItem.quantity });
+            updateItemUI(item, currentItem);
+            updateTotal();
+        });
+
+        // Remove item
+        removeBtn.addEventListener("click", async () => {
+            await deleteDoc(doc(db, "users", userId, "cart", data.id));
+            item.remove();
+            items = items.filter(it => it.id !== data.id);
+            updateTotal();
+            if (items.length === 0) {
+              cartSection.innerHTML = `<div class="message">Your cart is empty. <a href="menu.html" target="_top">Start shopping!</a></div>`;
+              badge.textContent = "0";
+              checkoutBtn.style.display = "none";
+            }
+        });
+
+        cartContent.appendChild(item);
+    }
+    
+    function updateItemUI(itemElement, itemData) {
+        itemElement.querySelector(".quantity span").textContent = itemData.quantity;
+        itemElement.querySelector(".price").textContent = `₹${(itemData.price * itemData.quantity).toFixed(2)}`;
+        itemElement.querySelector(".minus").disabled = itemData.quantity <= 1;
+    }
+
+    function updateTotal() {
+      let sum = 0;
+      items.forEach(item => {
+          sum += item.price * item.quantity;
+      });
+      
+      let total = sum;
+      let discountAmount = 0;
+      
+      if (discountPercent > 0) {
+        discountAmount = total * (discountPercent / 100);
+        total = total - discountAmount;
+      }
+      
+      let totalHTML = `Subtotal: ₹${sum.toFixed(2)}`;
+      if (discountAmount > 0) {
+        totalHTML += `<br><span style="color: green; font-size: 16px;">Discount: -₹${discountAmount.toFixed(2)}</span>`;
+      }
+      totalHTML += `<br>Total: ₹${total.toFixed(2)}`;
+
+      cartTotal.innerHTML = totalHTML;
+      badge.textContent = items.length;
+    }
+
+    // Coupon logic
+    applyCouponBtn.addEventListener("click", () => {
+      const code = couponCodeInput.value.trim().toUpperCase();
+      if (code === "FOOD10") {
+        discountPercent = 10;
+        couponMessage.textContent = "Coupon 'FOOD10' applied! 10% discount.";
+        couponMessage.style.color = "green";
+      } else {
+        discountPercent = 0;
+        couponMessage.textContent = "Invalid coupon code.";
+        couponMessage.style.color = "red";
+      }
+      updateTotal();
+    });
+
+    // --- CHECKOUT FLOW ---
+    
+    function validateStep1() {
+        const name = document.getElementById("fullName").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const street = document.getElementById("street").value.trim();
+        const city = document.getElementById("city").value.trim();
+        const pincode = document.getElementById("pincode").value.trim();
+        
+        if (!name || !phone || !street || !city || !pincode) {
+            showAppAlert("Please fill in all required address fields.");
+            return false;
+        }
+        if (!/^\d{10}$/.test(phone)) {
+            showAppAlert("Please enter a valid 10-digit phone number.");
+            return false;
+        }
+        return true;
+    }
+    
+    function validateStep2() {
+        const payment = document.getElementById("paymentMethod").value;
+        if (!payment) {
+            showAppAlert("Please select a payment method.");
+            return false;
+        }
+        return true;
+    }
+
+    checkoutBtn.addEventListener("click", () => { 
+        modalTitle.textContent = "Checkout - Step 1: Address";
+        stepAddress.classList.add("active");
+        stepPayment.classList.remove("active");
+        stepConfirm.classList.remove("active");
+        checkoutModal.classList.add("visible"); 
+    });
+    
+    closeModalBtn.addEventListener("click", () => {
+        checkoutModal.classList.remove("visible");
+    });
+
+    nextToPayment.addEventListener("click", () => {
+      if (!validateStep1()) return;
+      modalTitle.textContent = "Checkout - Step 2: Payment";
+      stepAddress.classList.remove("active");
+      stepPayment.classList.add("active");
+    });
+
+    backToAddress.addEventListener("click", () => {
+      modalTitle.textContent = "Checkout - Step 1: Address";
+      stepPayment.classList.remove("active");
+      stepAddress.classList.add("active");
+    });
+
+    nextToConfirm.addEventListener("click", () => {
+      if (!validateStep2()) return;
+      
+      modalTitle.textContent = "Checkout - Step 3: Confirm";
+      let summaryHtml = items.map(it => `<div>${it.name} × ${it.quantity} - ₹${(it.price * it.quantity).toFixed(2)}</div>`).join("");
+      summaryHtml += `<br><div><strong>Address:</strong> ${document.getElementById("street").value}, ${document.getElementById("city").value}</div>`;
+      summaryHtml += `<div><strong>Payment:</strong> ${document.getElementById("paymentMethod").value}</div>`;
+      if (deliveryMsgInput.value) {
+        summaryHtml += `<div><strong>Message:</strong> ${deliveryMsgInput.value}</div>`;
+      }
+      summaryHtml += `<div style="margin-top:10px;font-weight:bold; font-size: 16px;">${cartTotal.innerHTML}</div>`;
+      orderSummary.innerHTML = summaryHtml;
+
+      stepPayment.classList.remove("active");
+      stepConfirm.classList.add("active");
+    });
+
+    backToPayment.addEventListener("click", () => {
+      modalTitle.textContent = "Checkout - Step 2: Payment";
+      stepConfirm.classList.remove("active");
+      stepPayment.classList.add("active");
+    });
+
+    // --- *** CRITICAL: UPDATED PLACE ORDER LOGIC *** ---
+    placeOrderBtn.addEventListener("click", async () => {
+        if (!currentUserId) {
+            showAppAlert("You must be logged in to place an order.");
+            return;
+        }
+        
+        placeOrderBtn.disabled = true;
+        placeOrderBtn.textContent = "Placing Order...";
+
+        // 1. Group items by restaurant
+        const restaurantGroups = {};
+        items.forEach(item => {
+            const restId = item.restaurantId || item.restaurant || "unknown_restaurant"; 
+            if (restId === "unknown_restaurant") {
+                console.warn("Item missing restaurantId:", item);
+            }
+            
+            if (!restaurantGroups[restId]) {
+                restaurantGroups[restId] = {
+                    items: [],
+                    total: 0,
+                    restaurantName: item.restaurant
+                };
+            }
+            restaurantGroups[restId].items.push(item);
+            restaurantGroups[restId].total += item.price * item.quantity;
+        });
+        
+        // 2. Create one order *per restaurant* and mirror it
+        const batch = writeBatch(db);
+        let ordersPlaced = 0;
+
+        try {
+            const address = {
+                name: document.getElementById("fullName").value,
+                phone: document.getElementById("phone").value,
+                street: document.getElementById("street").value,
+                city: document.getElementById("city").value,
+                pincode: document.getElementById("pincode").value
+            };
+            const fullAddressString = `${address.street}, ${address.city}, ${address.pincode}`;
+            
+            for (const [restaurantId, group] of Object.entries(restaurantGroups)) {
+                if (restaurantId === "unknown_restaurant") {
+                    showAppAlert(`Could not place order for ${group.items.length} item(s) due to missing restaurant ID. Please re-add them to cart.`);
+                    continue; // Skip this group
+                }
+
+                // --- THIS IS THE KEY FIX ---
+                // 1. Create a new doc reference for the user's order *to get a unique ID*
+                const userOrderRef = doc(collection(db, "users", currentUserId, "orders"));
+                // const userOrderRef = doc(collection(db, "users", currentUserId,,restaurant, "orders" ));
+                
+                
+                // 2. Get that unique ID
+                const newOrderId = userOrderRef.id;
+
+                // 3. Create a reference to the restaurant's order queue *using the same ID*
+                const restaurantOrderRef = doc(db, "restaurants", restaurantId, "orders", newOrderId);
+                // --- END KEY FIX ---
+
+                // This is the order object that will be saved in BOTH places
+                const orderData = {
+                  items: group.items,
+                  total: group.total,
+                  restaurantId: restaurantId, 
+                  restaurantName: group.restaurantName,
+                  deliveryMsg: deliveryMsgInput.value,
+                  address: fullAddressString,
+                  customerName: address.name,
+                  customerPhone: address.phone,
+                  paymentMethod: document.getElementById("paymentMethod").value,
+                  status: "Pending",
+                  timestamp: serverTimestamp(),
+                  userId: currentUserId, // <-- Add userId so restaurant can reference it
+                  displayOrderId: newOrderId.slice(-6).toUpperCase() // <-- Add a short ID for display
+                };
+
+                // Add BOTH operations to the batch
+                batch.set(userOrderRef, orderData);        // 1. Save to users/{uid}/orders/{newId}
+                batch.set(restaurantOrderRef, orderData); // 2. Save to restaurants/{restId}/orders/{newId}
+                
+                ordersPlaced++;
+            }
+            
+            // 3. Clear the user's cart (also in the batch)
+            items.forEach(item => {
+                const cartItemRef = doc(db, "users", currentUserId, "cart", item.id);
+                batch.delete(cartItemRef);
+            });
+
+            // 4. Commit all database changes at once
+            if (ordersPlaced > 0) {
+                await batch.commit();
+                
+                // 5. Reset UI
+                checkoutModal.classList.remove("visible");
+                cartSection.innerHTML = `<div class="message">Order Placed Successfully! (${ordersPlaced} order(s) created). <a href="order.html" target="_top">View Orders</a></div>`;
+                badge.textContent = "0";
+                items = [];
+                
+                showAppAlert(`Successfully placed ${ordersPlaced} order(s)!`, "Order Placed!");
+            } else {
+                throw new Error("No valid orders could be created.");
+            }
+
+        } catch (error) {
+            console.error("Error placing order:", error);
+            showAppAlert("Failed to place order. Please try again. " + error.message, "Order Failed");
+            placeOrderBtn.disabled = false;
+            placeOrderBtn.textContent = "Place Order";
+        }
+    });
+
+  </script>
+
+</body>
+</html>

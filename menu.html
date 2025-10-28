@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FoodieHub - Menu</title>
+<link href="css/menu.css" rel="stylesheet">
+<style>
+/* ========= Filter Bar Modern Redesign ========= */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  padding: 15px 20px;
+  margin: 25px auto;
+  width: 90%;
+  max-width: 1000px;
+  transition: all 0.3s ease;
+}
+
+.filter-bar:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.filter-bar input[type="text"],
+.filter-bar input[type="number"],
+.filter-bar select {
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+  background: #fafafa;
+  color: #333;
+}
+
+.filter-bar input[type="text"]:focus,
+.filter-bar input[type="number"]:focus,
+.filter-bar select:focus {
+  border-color: #ff5722;
+  background: #fff;
+  box-shadow: 0 0 6px rgba(255,87,34,0.3);
+}
+
+.filter-bar label {
+  font-weight: 600;
+  color: #555;
+  font-size: 14px;
+  margin-right: -6px;
+}
+
+.filter-bar select {
+  cursor: pointer;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 700px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-bar input,
+  .filter-bar select {
+    width: 100%;
+  }
+  .filter-bar label {
+    align-self: flex-start;
+  }
+}
+
+/* ========= Load More Button ========= */
+#loadMoreBtn {
+  background: linear-gradient(90deg, #ff5722, #ff7043);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  margin: 30px auto;
+  display: block;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+#loadMoreBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  background: linear-gradient(90deg, #ff7043, #ff8a65);
+}
+
+/* ========= Keep your previous CSS intact ========= */
+/* ... other CSS from your menu.css or inline styles ... */
+</style>
+</head>
+
+<body>
+<!-- HEADER -->
+<header>
+  <div class="wrap nav">
+    <div class="brand">
+      <img src="images/logo/logo.png" alt="Logo" />
+      <div class="logo"><span>Foodie</span>Hub</div>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="menu.html" class="active">Menu</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="order.html">Order</a></li>
+      </ul>
+    </nav>
+    <div class="search">
+      <input type="text" placeholder="Search for food..." id="searchInput" />
+    </div>
+    <div class="icons">
+      <div class="icon-btn" id="cartIcon"><a href="cart.html">🛒</a><span class="badge">0</span></div>
+      <div class="icon-btn" id="userIcon">👤</div>
+    </div>
+  </div>
+</header>
+
+<!-- Hero Section -->
+<div style="background-image: url('images/home background/1.jpg'); background-size: cover; background-position: center;">
+  <section class="hero">
+    <h1>Our Delicious Menu</h1>
+    <p>Discover flavors you’ll love, delivered fast & fresh</p>
+  </section>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+  <input type="text" id="liveSearch" placeholder="Search dishes..." />
+  <select id="categoryFilter">
+    <option value="all">All Categories</option>
+  </select>
+  <label>Min ₹</label>
+  <input type="number" id="minPrice" placeholder="0" />
+  <label>Max ₹</label>
+  <input type="number" id="maxPrice" placeholder="1000" />
+  <select id="sortSelect">
+    <option value="none">Sort By</option>
+    <option value="asc">Price: Low to High</option>
+    <option value="desc">Price: High to Low</option>
+  </select>
+</div>
+
+<!-- Menu Grid -->
+<div class="menu-grid" id="menuGrid"></div>
+<button id="loadMoreBtn">Load More Dishes</button>
+
+<!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer">
+        <h4>FoodieHub</h4>
+        <p>Your favorite food delivery app bringing delicious meals from the best restaurants right to your doorstep.</p>
+        <div style="margin-top:10px">Follow us: <span style="opacity:0.9">Facebook · Twitter · Instagram</span></div>
+      </div>
+
+      <div class="footer">
+        <h4>Quick Links</h4>
+        <a href="about.html">About Us</a>
+        <a href="menu.html">Menu</a>
+        <a href="contact.html">Contact</a>
+        <a href="Privacy Policy.pdf">Privacy Policy</a>
+      </div>
+
+      <div class="footer">
+        <h4>Contact Us</h4>
+        <!-- The numbers, email or anything used are just for showing purpose -->
+        <a href="tel:+15551234567">+91-97794xxxxx</a>
+        <a href="mailto:hello@foodiehub.com">hello@foodiehub.com</a>
+        <div style="margin-top:10px">123 Food Street, Jalandhar, Punjab</div>
+      </div>
+
+      <div class="footer">
+        <h4>Stay Updated</h4>
+        <p style="color:rgba(255,255,255,0.8)">Subscribe to get special offers and updates</p>
+        <form onsubmit="event.preventDefault();alert('Thanks for subscribing!');" style="display:flex;gap:8px;margin-top:10px;">
+          <input type="email" required placeholder="Enter your email" style="flex:1;padding:10px;border-radius:8px;border:0;outline:none"/>
+          <button class="btn" style="padding:10px 12px;border-radius:8px">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <div style="max-width:var(--max-width);margin:18px auto 0;color:rgba(255,255,255,0.6);font-size:13px;padding:0 24px;">
+      © 2024 FoodieHub. All rights reserved. &nbsp;&nbsp;<a href="Privacy Policy.pdf"> Terms of Service · Privacy Policy</a>
+    </div>
+  </footer>
+
+  <script>
+    // tiny behavior: toast when Add buttons clicked
+    document.querySelectorAll('.add-btn').forEach(btn=>{
+      btn.addEventListener('click', e=>{
+        const title = e.target.closest('.card').querySelector('.title')?.textContent || 'item';
+        // simple toast:
+        const t = document.createElement('div');
+        t.textContent = title + ' added to cart';
+        t.style.position='fixed';
+        t.style.right='18px';
+        t.style.bottom='18px';
+        t.style.background='rgba(16,24,40,0.95)';
+        t.style.color='white';
+        t.style.padding='12px 16px';
+        t.style.borderRadius='10px';
+        t.style.boxShadow='0 8px 30px rgba(2,6,23,0.4)';
+        t.style.zIndex=9999;
+        document.body.appendChild(t);
+        setTimeout(()=>t.style.opacity='0',1400);
+        setTimeout(()=>t.remove(),2000);
+      });
+    });
+  </script>
+
+<script type="module">
+import { 
+  initializeApp 
+} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+import { 
+  getFirestore, collectionGroup, getDocs, getDoc, doc, setDoc 
+} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+import {
+  getAuth, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+// ==========================
+// Firebase Config
+// ==========================
+const firebaseConfig = {
+  apiKey: "AIzaSyDDXAnALGnxD0Jwf8S_wlH-Bd_4mamwQSM",
+  authDomain: "food-order-website-923a1.firebaseapp.com",
+  projectId: "food-order-website-923a1",
+  storageBucket: "food-order-website-923a1.appspot.com",
+  messagingSenderId: "435502645513",
+  appId: "1:435502645513:web:88f102f36d0c03cd8553d8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// ==========================
+// DOM Elements
+// ==========================
+const menuGrid = document.getElementById("menuGrid");
+const loadMoreBtn = document.getElementById("loadMoreBtn");
+const categoryFilter = document.getElementById("categoryFilter");
+const minPrice = document.getElementById("minPrice");
+const maxPrice = document.getElementById("maxPrice");
+const sortSelect = document.getElementById("sortSelect");
+const liveSearch = document.getElementById("liveSearch");
+const searchInput = document.getElementById("searchInput"); // top search bar
+const cartBadge = document.querySelector(".badge");
+
+// ==========================
+let currentUser = null;
+onAuthStateChanged(auth, user => {
+  if (user) {
+    currentUser = user;
+    console.log("✅ Logged in as:", user.email);
+  } else {
+    currentUser = null;
+    console.log("🚫 Not logged in");
+  }
+});
+
+// ==========================
+// Fetch Dishes
+// ==========================
+let allDishes = [];
+let filteredDishes = [];
+let displayedCount = 0;
+const INITIAL_LOAD = 24;
+const LOAD_MORE_COUNT = 12;
+
+async function fetchAllDishes() {
+  try {
+    const snap = await getDocs(collectionGroup(db, "menu"));
+    const dishes = [];
+    const userNameCache = {};
+
+    for (const docSnap of snap.docs) {
+      const data = docSnap.data();
+      let restaurantName = "Unknown";
+
+      try {
+        const restaurantParent = docSnap.ref.parent.parent;
+        if (restaurantParent) {
+          const userId = restaurantParent.id;
+          if (userNameCache[userId]) {
+            restaurantName = userNameCache[userId];
+          } else {
+            const userRef = doc(db, "users", userId);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists() && userSnap.data().type === "restaurant") {
+              restaurantName = userSnap.data().name || "Unknown";
+              userNameCache[userId] = restaurantName;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Could not fetch restaurant name:", err);
+      }
+
+      dishes.push({
+        name: data.name || "Unnamed Dish",
+        desc: data.desc || "",
+        price: Number(data.price) || 0,
+        imageURL: data.imageURL || "",
+        category: data.category || "Others",
+        ingredients: data.ingredients || "Not specified",
+        restaurant: restaurantName
+      });
+    }
+
+    // ✅ Shuffle dishes randomly
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    allDishes = shuffleArray(dishes); // randomized
+    populateCategoryFilter();
+    applyFilters();
+
+  } catch (err) {
+    console.error("Error fetching dishes:", err);
+    menuGrid.innerHTML = `<p style="text-align:center; color:red;">Failed to load dishes. Check console.</p>`;
+  }
+}
+
+function populateCategoryFilter() {
+  const categories = ["all", ...new Set(allDishes.map(d => d.category))];
+  categoryFilter.innerHTML = "";
+  categories.forEach(cat => {
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    categoryFilter.appendChild(opt);
+  });
+}
+
+function applyFilters() {
+  const category = categoryFilter.value;
+  const min = Number(minPrice.value) || 0;
+  const max = Number(maxPrice.value) || Infinity;
+  const sort = sortSelect.value;
+  const search = (liveSearch.value || searchInput.value || "").toLowerCase(); // unified search
+
+  filteredDishes = allDishes.filter(d =>
+    (category === "all" || d.category === category) &&
+    d.price >= min &&
+    d.price <= max &&
+    (d.name.toLowerCase().includes(search) || d.desc.toLowerCase().includes(search))
+  );
+
+  if (sort === "asc") filteredDishes.sort((a,b)=>a.price-b.price);
+  if (sort === "desc") filteredDishes.sort((a,b)=>b.price-a.price);
+
+  displayedCount = 0;
+  menuGrid.innerHTML = "";
+  renderDishes();
+}
+
+// ==========================
+// Render Dishes
+// ==========================
+function renderDishes() {
+  const slice = filteredDishes.slice(displayedCount, displayedCount + (displayedCount === 0 ? INITIAL_LOAD : LOAD_MORE_COUNT));
+  slice.forEach(d => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.innerHTML = `
+      <img src="${d.imageURL}" alt="${d.name}" onerror="this.src='https://via.placeholder.com/400x300';"/>
+      <div class="card-content">
+        <h3>${d.name}</h3>
+        <p>${d.desc}</p>
+        <div class="card-footer">
+          <span class="price">₹${d.price}</span>
+          <span style="font-size:13px;color:#777;">${d.restaurant}</span>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:13px;color:#999;">${d.category}</span>
+          <button class="add-btn">Add</button>
+        </div>
+      </div>
+      <div class="ingredients">
+        <b>Ingredients:</b> ${d.ingredients}
+      </div>
+    `;
+
+    const addBtn = card.querySelector(".add-btn");
+    addBtn.addEventListener("click", () => handleAddToCart(d));
+
+    menuGrid.appendChild(card);
+  });
+
+  displayedCount += slice.length;
+  loadMoreBtn.style.display = displayedCount < filteredDishes.length ? "block" : "none";
+}
+
+// ==========================
+// Handle Add to Cart
+// ==========================
+async function handleAddToCart(dish) {
+  if (!currentUser) {
+    const overlay = document.createElement("div");
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 9999;
+    `;
+
+    overlay.innerHTML = `
+      <div style="background: #fff; border-radius: 16px; padding: 40px; max-width: 400px; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,0.15);">
+        <h2 style="margin-bottom: 10px; font-size: 1.6rem; color: #333;">Sign in Required</h2>
+        <p style="color: #666;">Please sign in to add dishes to your cart.</p>
+        <div style="margin-top: 25px; display: flex; justify-content: center; gap: 12px;">
+          <button id="popupLoginBtn" style="background:#ff5722; color:#fff; border:none; padding:10px 25px; border-radius:8px; cursor:pointer;">Sign In</button>
+          <button id="popupCancelBtn" style="background:#eee; color:#333; border:none; padding:10px 25px; border-radius:8px; cursor:pointer;">Cancel</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    document.getElementById("popupLoginBtn").addEventListener("click", () => {
+      window.location.href = "login.html";
+    });
+    document.getElementById("popupCancelBtn").addEventListener("click", () => {
+      overlay.remove();
+    });
+
+    return;
+  }
+
+  try {
+    const cartRef = doc(db, "users", currentUser.uid, "cart", dish.name);
+    await setDoc(cartRef, {
+      name: dish.name,
+      price: dish.price,
+      imageURL: dish.imageURL,
+      restaurant: dish.restaurant,
+      category: dish.category,
+      quantity: 1,
+      addedAt: new Date()
+    });
+
+    const toast = document.createElement("div");
+    toast.textContent = `✅ ${dish.name} added to your cart!`;
+    toast.style.cssText = `
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+      background: #333; color: white; padding: 10px 20px; border-radius: 8px;
+      opacity: 0; transition: opacity 0.3s; z-index: 9999;
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => (toast.style.opacity = 1), 10);
+    setTimeout(() => {
+      toast.style.opacity = 0;
+      setTimeout(() => toast.remove(), 300);
+    }, 2000);
+
+  } catch (err) {
+    console.error("Error adding to cart:", err);
+    alert("Failed to add dish to cart. Try again.");
+  }
+}
+
+// ==========================
+// Event Listeners
+// ==========================
+loadMoreBtn.addEventListener("click", renderDishes);
+categoryFilter.addEventListener("change", applyFilters);
+minPrice.addEventListener("input", applyFilters);
+maxPrice.addEventListener("input", applyFilters);
+sortSelect.addEventListener("change", applyFilters);
+liveSearch.addEventListener("input", applyFilters);
+searchInput.addEventListener("input", () => { // top search sync
+  liveSearch.value = searchInput.value;
+  applyFilters();
+});
+
+// ==========================
+// Start
+// ==========================
+fetchAllDishes();
+</script>
+
+</body>
+</html>
